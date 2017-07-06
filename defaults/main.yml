@@ -1,0 +1,6 @@
+---
+# defaults file for jolokia
+deploy_dir       :
+jolokia_version  : "1.3.6"
+jolokia_base_url : "https://repo1.maven.org/maven2/org/jolokia/"
+jolokia_url      : "{{ jolokia_base_url }}jolokia-war/{{ jolokia_version }}/jolokia-war-{{ jolokia_version }}.war"
