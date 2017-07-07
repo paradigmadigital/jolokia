@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Àlex Pérez-Pujol Gonzalez
+  description: Install jolokia
+  license: gpl2
+  min_ansible_version: 2.3
+  galaxy_tags: []
