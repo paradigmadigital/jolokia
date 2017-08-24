@@ -6,7 +6,7 @@ Install jolokia, a war binary that provides a REST api to interact with the JVM 
 Dependencies
 -------------
 
-This role needs the role [install-from-maven](https://git.paradigmadigital.com/ansible/install-from-maven). It can be installed with:
+This role needs the roles [install-from-maven](https://git.paradigmadigital.com/ansible/install-from-maven) and [python-pip](https://git.paradigmadigital.com/ansible/python-pip). They can be installed with:
 
 ```bash
 ansible-galaxy install -r requirements.tml

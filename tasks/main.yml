@@ -8,8 +8,13 @@
     group: "{{ user_owner }}"
     recurse: yes
 
+- name: Install python-pip
+  include_role:
+    name     : python-pip
+
 - name: Ensure requests is on latest version
   become: yes
+  become_method: "{{ become_method }}"
   pip:
     name: requests
     state: latest
@@ -20,22 +25,49 @@
   vars:
     file_url: "{{ jolokia_url }}"
 
+- name: Check if tomcat7 is installed in Red Hat or derivates
+  shell: "rpm -qa tomcat"
+  register: installed_tomcat
+  when:
+    ansible_os_family == "RedHat"
+    or
+    ansible_os_family == "CentOS"
+
+- set_fact: is_tomcat="{{ installed_tomcat }}"
+  when: installed_tomcat.changed
+
+- name: Check if tomcat7 is installed in Debian or derivates
+  shell: "dpkg-query -Wf'${db:Status-abbrev}' zsh | grep '^i'"
+  register: installed_tomcat
+  when:
+    ansible_os_family == "Debian"
+    or
+    ansible_distribution == 'Ubuntu'
+
+- set_fact: is_tomcat="{{ installed_tomcat }}"
+  when: installed_tomcat.changed
+
 - name: Create link to tomcat7 webapps
   become: yes
+  become_method: "{{ become_method }}"
   file:
     src: "{{ deploy_dir }}jolokia-war-{{ jolokia_version }}.war"
     dest: /var/lib/tomcat7/webapps/jolokia.war
     state: link
     force: yes
+  when: is_tomcat.stdout
 
 - name: Restart tomcat
   become: yes
+  become_method: "{{ become_method }}"
   service:
     name: tomcat7
     state: restarted
+  when: is_tomcat.stdout
 
 - name: Copy python jolokia client
   become: yes
+  become_method: "{{ become_method }}"
   copy:
     src: "files/jolokia.py"
     dest: "/usr/local/bin/pyjolokia"
@@ -45,6 +77,7 @@
 
 - name: Ensure pyjokola is installed
   become: yes
+  become_method: "{{ become_method }}"
   pip:
     name: pyjolokia
     state: latest
